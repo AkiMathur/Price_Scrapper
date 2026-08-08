@@ -1,626 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart Price Tracker</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #2c3e50;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, #2874f0 0%, #1e5bb8 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .navbar h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 0.5rem;
-        }
-
-        .navbar .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .search-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .search-section h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .search-section h2 i {
-            color: #2874f0;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 300px;
-            padding: 1rem 1.5rem;
-            border: 2px solid #e1e8ed;
-            border-radius: 50px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #2874f0;
-            box-shadow: 0 0 0 3px rgba(40, 116, 240, 0.1);
-        }
-
-        .search-btn {
-            background: linear-gradient(135deg, #2874f0, #1e5bb8);
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .search-btn:hover {
-            background: linear-gradient(135deg, #1e5bb8, #2874f0);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(40, 116, 240, 0.3);
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            margin-top: 30px;
-        }
-
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .card h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card h2 i {
-            color: #2874f0;
-        }
-
-        .found-products {
-            display: none;
-        }
-
-        .found-products.show {
-            display: block;
-        }
-
-        .product-card {
-            background: white;
-            border: 2px solid #f1f3f4;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .product-card:hover {
-            border-color: #2874f0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(40, 116, 240, 0.15);
-        }
-
-        .product-name {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            line-height: 1.4;
-        }
-
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #27ae60;
-            margin-bottom: 1rem;
-        }
-
-        .product-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .track-btn {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .track-btn:hover {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            transform: translateY(-1px);
-        }
-
-        .view-link {
-            color: #2874f0;
-            text-decoration: none;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .view-link:hover {
-            text-decoration: underline;
-        }
-
-        .tracked-products-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .tracked-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .tracked-item:hover {
-            background: #f8f9fa;
-            transform: translateX(5px);
-        }
-
-        .tracked-item.selected {
-            background: #e3f2fd;
-            border-left: 4px solid #2874f0;
-        }
-
-        .tracked-item input[type="radio"] {
-            margin: 0;
-            cursor: pointer;
-        }
-
-        .tracked-item a {
-            color: #2c3e50;
-            text-decoration: none;
-            font-weight: 500;
-            flex: 1;
-        }
-
-        .tracked-item a:hover {
-            color: #2874f0;
-        }
-
-        .price-history-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .price-history-section h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .price-history-section h2 i {
-            color: #2874f0;
-        }
-
-        .price-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .price-table th {
-            background: linear-gradient(135deg, #2874f0, #1e5bb8);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .price-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f3f4;
-        }
-
-        .price-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .price-table tr:hover {
-            background: #e3f2fd;
-        }
-
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            align-items: center;
-        }
-
-        .pagination-btn {
-            background: linear-gradient(135deg, #2874f0, #1e5bb8);
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .pagination-btn:hover {
-            background: linear-gradient(135deg, #1e5bb8, #2874f0);
-            transform: translateY(-1px);
-        }
-
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .refresh-btn {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .refresh-btn:hover {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            transform: translateY(-1px);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #6c757d;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                order: 2;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .search-form {
-                flex-direction: column;
-            }
-            
-            .search-input {
-                min-width: 100%;
-            }
-            
-            .product-actions {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .pagination-controls {
-                flex-wrap: wrap;
-            }
-        }
-
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 0.5rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Filter Controls */
-        .filter-controls {
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .filter-all-btn {
-            background: #6c757d;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .filter-all-btn:hover {
-            background: #5a6268;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PriceWatch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="navbar">
-        <a href="/refresh" style="text-decoration: none; color: #f1f3f4;"><h1><i class="fas fa-chart-trending-up"></i> Flipkart Price Tracker</h1></a>
-        <div class="subtitle">Track prices, save money, shop smart</div>
+
+<header>
+  <a class="brand" href="/">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <path d="M8 3L3 8V21C3 22.1 3.9 23 5 23H21C22.1 23 23 22.1 23 21V8L18 3H8Z" stroke="#F5C542" stroke-width="1.6"/>
+      <circle cx="16" cy="10" r="1.6" fill="#F5C542"/>
+      <path d="M3 8H23" stroke="#F5C542" stroke-width="1.6"/>
+    </svg>
+    <div>
+      <h1>PriceWatch</h1>
+      <span>Amazon &amp; Flipkart tracker</span>
     </div>
-    
-    <div class="container">
-        <!-- Search Section -->
-        <div class="search-section">
-            <h2><i class="fas fa-search"></i> Add Product to Track</h2>
-            <form action="/product-search" method="get" class="search-form">
-                <input type="text" name="url" placeholder="Paste Flipkart Product URL here..." required class="search-input">
-                <button type="submit" class="search-btn">
-                    <i class="fas fa-plus"></i> Get Product Details
-                </button>
-            </form>
-        </div>
+  </a>
 
-        <!-- Found Products Section -->
-        <div id="found-products" class="found-products {% if products %}show{% endif %}">
-            <div class="card">
-                <h2><i class="fas fa-search"></i> Products Found</h2>
-                {% for product in products %}
-                    <div class="product-card">
-                        <form action="/track" method="POST">
-                            <div class="product-name">{{ product.name }}</div>
-                            <div class="product-price">{{ product.price }}</div>
-                            <div class="product-actions">
-                                <button type="submit" class="track-btn">
-                                    <i class="fas fa-bookmark"></i> Track This Product
-                                </button>
-                                <a href="{{ product.link }}" target="_blank" class="view-link">
-                                    <i class="fas fa-external-link-alt"></i> View on Flipkart
-                                </a>
-                            </div>
-                            <input type="hidden" name="name" value="{{ product.name }}">
-                            <input type="hidden" name="price" value="{{ product.price }}">
-                            <input type="hidden" name="link" value="{{ product.link }}">
-                            <input type="hidden" name="image" value="{{ product.image }}">
-                        </form>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
+  <form class="search" action="/product-search" method="get">
+    <input type="text" name="url" placeholder="Paste a product URL to track…" required>
+    <button type="submit">Look up</button>
+  </form>
 
-        <div class="main-grid">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Tracked Products -->
-                <div class="card">
-                    <h2><i class="fas fa-bookmark"></i> Tracked Products</h2>
-                    <div class="filter-controls">
-                        <button class="filter-all-btn" onclick="showAllProducts()">
-                            <i class="fas fa-list"></i> Show All
-                        </button>
-                    </div>
-                    {% if bookmarked %}
-                        <div class="tracked-products-list">
-                            {% for product in bookmarked %}
-                                <div class="tracked-item {% if product.id == selected_product_id %}selected{% endif %}" onclick="filterByProduct({{ product.id }})">
-                                    <input type="radio" name="product-filter" value="{{ product.id }}" {% if product.id == selected_product_id %}checked{% endif %}>
-                                    <a href="/product/{{ product.id }}" target="_blank">{{ product.title }}</a>
-                                    <div class="product-actions">
-                                        <a href="/product/{{ product.id }}" class="view-details-btn">
-                                            <i class="fas fa-chart-line"></i> View Details
-                                        </a>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-bookmark"></i>
-                            <div>No products tracked yet</div>
-                            <div style="font-size: 0.9rem; margin-top: 0.5rem;">Add a product URL above to get started</div>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+  <a class="refresh-btn" href="/refresh">↻ Refresh all</a>
+</header>
 
-            <!-- Price History Section -->
-            <div class="price-history-section">
-                <h2><i class="fas fa-history"></i> Price History</h2>
-                {% if all_items %}
-                    <table class="price-table">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-calendar"></i> Date</th>
-                                <th><i class="fas fa-tag"></i> Product</th>
-                                <th><i class="fas fa-rupee-sign"></i> Price</th>
-                            </tr>
-                        </thead>
-                        <tbody id="price-history-body">
-                            {% for item in all_items %}
-                            <tr data-product-id="{{ item.product_id if item.product_id else '' }}">
-                                <td>{{ item.date }}</td>
-                                <td>{{ item.title }}</td>
-                                <td><strong>{{ item.price }}</strong></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    
-                    <div class="pagination-controls">
-                        <a href="/refresh" class="refresh-btn">
-                            <i class="fas fa-sync-alt"></i> Refresh All Prices
-                        </a>
-                        
-                        {% if pagination.has_prev %}
-                            <a href="?page={{ pagination.page - 1 }}{% if selected_product_id %}&id={{ selected_product_id }}{% endif %}" class="pagination-btn">
-                                <i class="fas fa-chevron-left"></i> Previous
-                            </a>
-                        {% endif %}
-
-                        <span style="color: #6c757d; font-weight: 500;">
-                            Page {{ pagination.page }} of {{ pagination.total_pages }}
-                        </span>
-
-                        {% if pagination.has_next %}
-                            <a href="?page={{ pagination.page + 1 }}{% if selected_product_id %}&id={{ selected_product_id }}{% endif %}" class="pagination-btn">
-                                Next <i class="fas fa-chevron-right"></i>
-                            </a>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">
-                        <i class="fas fa-chart-line"></i>
-                        <div>No price history available</div>
-                        <div style="font-size: 0.9rem; margin-top: 0.5rem;">Track some products to see their price history</div>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+<div class="layout">
+  <aside>
+    <div class="aside-head">
+      <h2>Tracked ({{ bookmarked|length }})</h2>
+      {% if selected_product_id %}
+      <a class="show-all-btn" href="/">Show all</a>
+      {% endif %}
     </div>
+    {% if bookmarked %}
+    <div class="tag-list">
+      {% for item in bookmarked %}
+      <a class="tag {% if selected_product_id and selected_product_id == item.id %}active{% endif %}"
+         href="/?id={{ item.id }}">
+        {% if item.image %}
+        <img src="{{ item.image }}" onerror="this.style.display='none'">
+        {% endif %}
+        <div class="tag-info">
+          <div class="name">{{ item.title }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-note">Nothing tracked yet. Paste a product URL above to start watching its price.</p>
+    {% endif %}
+  </aside>
 
-    <script>
-        let currentFilter = null;
+  <main>
+    {% if products %}
+      {% for p in products %}
+      <div class="found-panel">
+        <img src="{{ p.image }}" onerror="this.style.display='none'">
+        <div>
+          <div class="name">{{ p.name }}</div>
+          <div class="price">₹{{ "{:,}".format(p.price) }}</div>
+        </div>
+        <form action="/track" method="post">
+          <input type="hidden" name="name" value="{{ p.name }}">
+          <input type="hidden" name="price" value="{{ p.price }}">
+          <input type="hidden" name="link" value="{{ p.link }}">
+          <input type="hidden" name="image" value="{{ p.image }}">
+          <button type="submit">Track this product</button>
+        </form>
+      </div>
+      {% endfor %}
+    {% endif %}
 
-        function filterByProduct(productId) {
-            // Navigate to the root URL with the product ID as a query parameter
-            window.location.href = `/?id=${productId}`;
-        }
+    <div class="panel">
+      <div class="panel-head">
+        {% if selected_product_id %}
+        {% set selected_item = bookmarked | selectattr('id', 'equalto', selected_product_id) | list | first %}
+        <h2>Filtered: {{ selected_item.title if selected_item else 'selected product' }}</h2>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="hint">{{ pagination.total }} record{{ 's' if pagination.total != 1 else '' }}</span>
+          <a class="show-all-btn" href="/">× Clear filter</a>
+        </div>
+        {% else %}
+        <h2>All price history</h2>
+        <span class="hint">Showing {{ all_items|length }} of {{ pagination.total }} records</span>
+        {% endif %}
+      </div>
 
-        function showAllProducts() {
-            // Navigate to the root URL to clear the filter
-            window.location.href = '/';
-        }
+      {% if all_items %}
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Product</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          {% for row in all_items %}
+          <tr>
+            {% set d = row.date.split(' ')[0].split('-') %}
+            <td class="date">{{ d[2] }}/{{ d[1] }}/{{ d[0] }}</td>
+            <td><a href="/product/{{ row.product_id }}">{{ row.title }}</a></td>
+            <td class="price">₹{{ "{:,}".format(row.price) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="empty-note" style="padding:20px;">No price records yet. Track a product to start building history.</p>
+      {% endif %}
 
-        function filterPriceHistory(productId) {
-            const rows = document.querySelectorAll('#price-history-body tr');
-            
-            if (productId === null) {
-                // Show all rows
-                rows.forEach(row => {
-                    row.style.display = '';
-                });
-            } else {
-                // Show only rows for selected product
-                rows.forEach(row => {
-                    const rowProductId = row.getAttribute('data-product-id');
-                    if (rowProductId && parseInt(rowProductId) === productId) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            }
-        }
+      <div class="pagination">
+        {% set qs = '&id=' + selected_product_id|string if selected_product_id else '' %}
+        {% if pagination.has_prev %}
+        <a href="/?page={{ pagination.page - 1 }}{{ qs }}">‹ Prev</a>
+        {% else %}
+        <span class="disabled">‹ Prev</span>
+        {% endif %}
 
-    </script>
+        {% for n in range(1, pagination.total_pages + 1) %}
+        <a href="/?page={{ n }}{{ qs }}" class="{% if n == pagination.page %}active{% endif %}">{{ n }}</a>
+        {% endfor %}
+
+        {% if pagination.has_next %}
+        <a href="/?page={{ pagination.page + 1 }}{{ qs }}">Next ›</a>
+        {% else %}
+        <span class="disabled">Next ›</span>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+</div>
+
 </body>
 </html>

@@ -1,596 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.title }} - Price Tracker</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #2c3e50;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2874f0 0%, #1e5bb8 100%);
-            color: white;
-            padding: 2rem 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header h1 i {
-            margin-right: 0.5rem;
-            color: #ffd700;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-            text-decoration: none;
-            font-size: 1rem;
-            opacity: 0.9;
-            transition: opacity 0.3s ease;
-            margin-bottom: 1rem;
-        }
-
-        .back-link:hover {
-            opacity: 1;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .product-overview {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .product-info-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-info-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(135deg, #2874f0, #764ba2);
-        }
-
-        .product-info-card h2 {
-            font-size: 1.5rem;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            line-height: 1.4;
-            font-weight: 600;
-        }
-
-        .product-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .meta-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #2874f0, #1e5bb8);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .meta-content h3 {
-            font-size: 0.9rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.2rem;
-        }
-
-        .meta-content p {
-            font-size: 1.1rem;
-            color: #2c3e50;
-            font-weight: 600;
-        }
-
-        .flipkart-link {
-            background: linear-gradient(135deg, #ff6b35, #f7931e);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .flipkart-link:hover {
-            background: linear-gradient(135deg, #f7931e, #ff6b35);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
-        }
-
-        .stats-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2874f0;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .chart-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 2rem;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f8f9fa;
-        }
-
-        .chart-header h3 {
-            font-size: 1.5rem;
-            color: #2c3e50;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .chart-header h3 i {
-            color: #2874f0;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 400px;
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .price-insights {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .insight-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-left: 4px solid #2874f0;
-        }
-
-        .insight-card.positive {
-            border-left-color: #27ae60;
-        }
-
-        .insight-card.negative {
-            border-left-color: #e74c3c;
-        }
-
-        .insight-card.neutral {
-            border-left-color: #f39c12;
-        }
-
-        .insight-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .insight-card.positive .insight-icon {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            color: white;
-        }
-
-        .insight-card.negative .insight-icon {
-            background: linear-gradient(135deg, #e74c3c, #ec7063);
-            color: white;
-        }
-
-        .insight-card.neutral .insight-icon {
-            background: linear-gradient(135deg, #f39c12, #f7dc6f);
-            color: white;
-        }
-
-        .insight-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .insight-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .insight-card.positive .insight-value {
-            color: #27ae60;
-        }
-
-        .insight-card.negative .insight-value {
-            color: #e74c3c;
-        }
-
-        .insight-card.neutral .insight-value {
-            color: #f39c12;
-        }
-
-        .insight-description {
-            font-size: 0.9rem;
-            color: #6c757d;
-            line-height: 1.4;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .product-overview {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .chart-container {
-                height: 300px;
-            }
-            
-            .chart-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-        }
-
-        /* Loading states */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-            color: #6c757d;
-        }
-
-        .loading i {
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ product.title }} — PriceWatch</title>
+  <meta name="description" content="Track and analyse the price of {{ product.title }} on PriceWatch.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
+
 <body>
-    <div class="header">
-        <div class="container">
-            <a href="/" class="back-link">
-                <i class="fas fa-arrow-left"></i>
-                Back to Dashboard
-            </a>
-            <h1><i class="fas fa-chart-line"></i> Price Tracker</h1>
+
+  <header>
+    <a class="brand" href="/">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M8 3L3 8V21C3 22.1 3.9 23 5 23H21C22.1 23 23 22.1 23 21V8L18 3H8Z" stroke="#F5C542"
+          stroke-width="1.6" />
+        <circle cx="16" cy="10" r="1.6" fill="#F5C542" />
+        <path d="M3 8H23" stroke="#F5C542" stroke-width="1.6" />
+      </svg>
+      <div>
+        <h1>PriceWatch</h1>
+        <span>Amazon &amp; Flipkart tracker</span>
+      </div>
+    </a>
+    <a class="refresh-btn" href="/refresh" style="margin-left:auto;">↻ Refresh all</a>
+  </header>
+
+  <div style="padding:24px 28px;max-width:960px;margin:0 auto;">
+    <a class="back-link" href="/">← Back to all products</a>
+
+    <!-- ── Product hero: image + title + price + store link ── -->
+    <div class="product-hero">
+      {% if product.image %}
+      <img class="product-hero-img" src="{{ product.image }}" alt="{{ product.title }}" id="product-image">
+      {% else %}
+      <div class="product-hero-img" style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;">No image</div>
+      {% endif %}
+
+      <div class="product-hero-body">
+        <h3 id="product-title">{{ product.title }}</h3>
+
+        <div class="price-now" id="current-price">
+          ₹{{ "{:,}".format(stats.current) }}
+          {% if stats.trend == 'Decreased' %}
+          <span class="delta down">▼ {{ stats.trend_description }}</span>
+          {% elif stats.trend == 'Increased' %}
+          <span class="delta up">▲ {{ stats.trend_description }}</span>
+          {% else %}
+          <span class="delta flat">{{ stats.trend_description }}</span>
+          {% endif %}
         </div>
+
+        <div class="stat-grid" style="margin-top:14px;">
+          <div class="stat">
+            <div class="k">Lowest</div>
+            <div class="v">₹{{ "{:,}".format(stats.lowest) }}</div>
+          </div>
+          <div class="stat">
+            <div class="k">Highest</div>
+            <div class="v">₹{{ "{:,}".format(stats.highest) }}</div>
+          </div>
+          <div class="stat">
+            <div class="k">Average</div>
+            <div class="v">₹{{ "{:,}".format(stats.average) }}</div>
+          </div>
+          <div class="stat">
+            <div class="k">Records</div>
+            <div class="v">{{ stats.count }}</div>
+          </div>
+          {% if stats.count > 1 %}
+          <div class="stat">
+            <div class="k">Range</div>
+            <div class="v">₹{{ "{:,}".format(stats.variation_amount) }} ({{ "%.1f"|format(stats.variation_percent) }}%)</div>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if product.url %}
+        <a class="store-link" href="{{ product.url }}" target="_blank" rel="noopener noreferrer" id="store-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          View on Store
+        </a>
+        {% endif %}
+      </div>
     </div>
 
-    <div class="container">
-        <div class="product-overview">
-            <div class="product-info-card">
-                <h2>{{ product.title }}</h2>
-                <div class="product-meta">
-                    <div class="product-image">
-                        <img style="width: 100px;" src="{{product.image}}">
-                    </div>
-                    <div class="meta-item">
-                        <div class="meta-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div class="meta-content">
-                            <h3>Tracking Since</h3>
-                            <p>{{ product.created_at.split(' ')[0] if product.created_at else 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="meta-item">
-                        <div class="meta-icon">
-                            <i class="fas fa-history"></i>
-                        </div>
-                        <div class="meta-content">
-                            <h3>Price Updates</h3>
-                            <p>{{ stats.count }} recorded</p>
-                        </div>
-                    </div>
-                </div>
-                <a href="{{ product.url }}" target="_blank" class="flipkart-link">
-                    <i class="fab fa-flipboard"></i>
-                    View on Flipkart
-                </a>
-            </div>
-
-            <div class="stats-card">
-                <h3 style="margin-bottom: 1.5rem; color: #2c3e50; font-weight: 600;">
-                    <i class="fas fa-analytics" style="color: #2874f0; margin-right: 0.5rem;"></i>
-                    Price Statistics
-                </h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">₹{{ "{:,}".format(stats.current) }}</div>
-                        <div class="stat-label">Current Price</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">₹{{ "{:,}".format(stats.lowest) }}</div>
-                        <div class="stat-label">Lowest Price</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">₹{{ "{:,}".format(stats.highest) }}</div>
-                        <div class="stat-label">Highest Price</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">₹{{ "{:,}".format(stats.average) }}</div>
-                        <div class="stat-label">Average Price</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="chart-section">
-            <div class="chart-header">
-                <h3><i class="fas fa-chart-line"></i> Price History</h3>
-                <div style="font-size: 0.9rem; color: #6c757d;">
-                    <i class="fas fa-info-circle"></i>
-                    Showing price trends over time
-                </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="priceChart"></canvas>
-            </div>
-        </div>
-
-        <div class="price-insights">
-            <h3 style="margin-bottom: 1.5rem; color: #2c3e50; font-weight: 600;">
-                <i class="fas fa-lightbulb" style="color: #2874f0; margin-right: 0.5rem;"></i>
-                Price Insights
-            </h3>
-            <div class="insights-grid">
-                <div class="insight-card {{ 'positive' if stats.is_lowest else 'negative' if stats.is_highest else 'neutral' }}">
-                    <div class="insight-icon">
-                        <i class="fas fa-{{ 'thumbs-up' if stats.is_lowest else 'thumbs-down' if stats.is_highest else 'minus' }}"></i>
-                    </div>
-                    <div class="insight-title">Current Price Status</div>
-                    <div class="insight-value">
-                        {{ 'Best Price!' if stats.is_lowest else 'Highest Price' if stats.is_highest else 'Moderate' }}
-                    </div>
-                    <div class="insight-description">
-                        {{ 'This is the lowest price we\'ve tracked for this product.' if stats.is_lowest else 'This is the highest price we\'ve seen.' if stats.is_highest else 'Price is within normal range.' }}
-                    </div>
-                </div>
-
-                <div class="insight-card {{ 'positive' if stats.trend == 'Decreased' else 'negative' if stats.trend == 'Increased' else 'neutral' }}">
-                    <div class="insight-icon">
-                        <i class="fas fa-{{ 'arrow-down' if stats.trend == 'Decreased' else 'arrow-up' if stats.trend == 'Increased' else 'equals' }}"></i>
-                    </div>
-                    <div class="insight-title">Recent Trend</div>
-                    <div class="insight-value">{{ stats.trend }}</div>
-                    <div class="insight-description">{{ stats.trend_description }}</div>
-                </div>
-
-                <div class="insight-card neutral">
-                    <div class="insight-icon">
-                        <i class="fas fa-percentage"></i>
-                    </div>
-                    <div class="insight-title">Price Range</div>
-                    <div class="insight-value">{{ "%.1f"|format(stats.variation_percent) }}%</div>
-                    <div class="insight-description">
-                        Total variation between highest and lowest price is ₹{{ "{:,}".format(stats.variation_amount) }}.
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- ── Price over time chart ── -->
+    <div class="panel chart-panel">
+      <div class="panel-head">
+        <h2>Price over time</h2>
+        <span class="hint">Hover the line for exact prices and dates</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="priceChart"></canvas>
+      </div>
     </div>
 
-    <script>
-        const ctx = document.getElementById('priceChart').getContext('2d');
-        const priceChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ time | tojson }},
-                datasets: [{
-                    label: 'Price (₹)',
-                    data: {{ prices | tojson }},
-                    fill: true,
-                    backgroundColor: 'rgba(40, 116, 240, 0.1)',
-                    borderColor: '#2874f0',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointBackgroundColor: '#2874f0',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    pointHoverBackgroundColor: '#1e5bb8',
-                    pointHoverBorderColor: '#ffffff'
-                }]
+    <!-- ── Product Insights ── -->
+    <div class="panel" id="insights-panel">
+      <div class="panel-head">
+        <h2>Product Insights</h2>
+        <span class="hint">Smart signals based on tracked price data</span>
+      </div>
+
+      <div class="insights-grid">
+
+        {% if stats.is_lowest %}
+        <div class="insight-card good">
+          <div class="insight-icon">🏆</div>
+          <div class="insight-label">All-Time Low</div>
+          <div class="insight-value">₹{{ "{:,}".format(stats.current) }}</div>
+          <div class="insight-sub">Current price is the lowest ever recorded. Great time to buy!</div>
+        </div>
+        {% elif stats.count > 1 %}
+        <div class="insight-card neutral">
+          <div class="insight-icon">📉</div>
+          <div class="insight-label">From All-Time Low</div>
+          <div class="insight-value">+₹{{ "{:,}".format(stats.current - stats.lowest) }}</div>
+          <div class="insight-sub">₹{{ "{:,}".format(stats.lowest) }} was the lowest price recorded.</div>
+        </div>
+        {% endif %}
+
+        {% if stats.is_highest and stats.count > 1 %}
+        <div class="insight-card bad">
+          <div class="insight-icon">📈</div>
+          <div class="insight-label">All-Time High</div>
+          <div class="insight-value">₹{{ "{:,}".format(stats.current) }}</div>
+          <div class="insight-sub">Current price is the highest ever recorded. Consider waiting.</div>
+        </div>
+        {% endif %}
+
+        {% if stats.count > 1 and stats.highest > stats.current %}
+        <div class="insight-card good">
+          <div class="insight-icon">💸</div>
+          <div class="insight-label">Savings vs Peak</div>
+          <div class="insight-value">₹{{ "{:,}".format(stats.highest - stats.current) }}</div>
+          <div class="insight-sub">You save {{ "%.1f"|format(((stats.highest - stats.current) / stats.highest) * 100) }}% vs the peak price of ₹{{ "{:,}".format(stats.highest) }}.</div>
+        </div>
+        {% endif %}
+
+        <div class="insight-card {% if stats.trend == 'Decreased' %}good{% elif stats.trend == 'Increased' %}bad{% else %}neutral{% endif %}">
+          <div class="insight-icon">{% if stats.trend == 'Decreased' %}🔻{% elif stats.trend == 'Increased' %}🔺{% else %}➡️{% endif %}</div>
+          <div class="insight-label">Price Trend</div>
+          <div class="insight-value">{{ stats.trend }}</div>
+          <div class="insight-sub">{{ stats.trend_description }}</div>
+        </div>
+
+        {% if stats.count > 1 %}
+          {% if stats.current < stats.average %}
+          <div class="insight-card good">
+            <div class="insight-icon">📊</div>
+            <div class="insight-label">Below Average</div>
+            <div class="insight-value">−₹{{ "{:,}".format(stats.average - stats.current) }}</div>
+            <div class="insight-sub">₹{{ "{:,}".format(stats.average - stats.current) }} below the average of ₹{{ "{:,}".format(stats.average) }}.</div>
+          </div>
+          {% elif stats.current > stats.average %}
+          <div class="insight-card bad">
+            <div class="insight-icon">📊</div>
+            <div class="insight-label">Above Average</div>
+            <div class="insight-value">+₹{{ "{:,}".format(stats.current - stats.average) }}</div>
+            <div class="insight-sub">₹{{ "{:,}".format(stats.current - stats.average) }} above the average of ₹{{ "{:,}".format(stats.average) }}.</div>
+          </div>
+          {% else %}
+          <div class="insight-card neutral">
+            <div class="insight-icon">📊</div>
+            <div class="insight-label">At Average</div>
+            <div class="insight-value">₹{{ "{:,}".format(stats.average) }}</div>
+            <div class="insight-sub">Current price matches the historical average exactly.</div>
+          </div>
+          {% endif %}
+        {% endif %}
+
+        <div class="insight-card info">
+          <div class="insight-icon">🗂️</div>
+          <div class="insight-label">Data Points</div>
+          <div class="insight-value">{{ stats.count }} record{{ 's' if stats.count != 1 else '' }}</div>
+          <div class="insight-sub">
+            {% if stats.count == 1 %}Only one data point so far. Refresh regularly for better insights.
+            {% else %}Price tracked across {{ stats.count }} snapshots. Insights improve over time.{% endif %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Buy recommendation banner -->
+      <div class="buy-recommendation">
+        {% if stats.is_lowest and stats.count > 1 %}
+          <span class="rec-badge good">✅ Buy Now</span>
+          <span class="rec-text">Current price is the all-time low — strong buy signal.</span>
+        {% elif stats.is_highest and stats.count > 1 %}
+          <span class="rec-badge bad">⏳ Wait</span>
+          <span class="rec-text">Price is at its highest. Consider waiting for a drop.</span>
+        {% elif stats.count > 1 and stats.current < stats.average %}
+          <span class="rec-badge good">👍 Good Deal</span>
+          <span class="rec-text">Price is below average — a reasonable time to buy.</span>
+        {% elif stats.count <= 1 %}
+          <span class="rec-badge neutral">📡 Tracking</span>
+          <span class="rec-text">Not enough data yet. Check back after a few more price updates.</span>
+        {% else %}
+          <span class="rec-badge neutral">🔍 Monitor</span>
+          <span class="rec-text">Price is above average. Keep tracking for a better deal.</span>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const labels = {{ time| tojson }};
+    const prices = {{ prices| tojson }};
+    const lowest = {{ stats.lowest }};
+    const highest = {{ stats.highest }};
+
+    if (prices.length > 0) {
+      const rising = prices.length > 1 && prices[prices.length - 1] > prices[0];
+      const lineColor = rising ? '#FB6B5B' : '#34D399';
+
+      const ctx = document.getElementById('priceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Price',
+            data: prices,
+            borderColor: lineColor,
+            backgroundColor: (ctx) => {
+              const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
+              g.addColorStop(0, lineColor + '33');
+              g.addColorStop(1, lineColor + '00');
+              return g;
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        cornerRadius: 8,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                return 'Price: ₹' + context.parsed.y.toLocaleString();
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Date',
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            color: '#2c3e50'
-                        },
-                        ticks: {
-                            color: '#6c757d',
-                            maxTicksLimit: 8
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.1)',
-                            drawBorder: false
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Price (₹)',
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            color: '#2c3e50'
-                        },
-                        ticks: {
-                            color: '#6c757d',
-                            callback: function(value) {
-                                return '₹' + value.toLocaleString();
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.1)',
-                            drawBorder: false
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                }
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: prices.map(p => (p === lowest || p === highest) ? 4 : 2.5),
+            pointBackgroundColor: prices.map(p =>
+              p === lowest ? '#34D399' : p === highest ? '#FB6B5B' : '#F5C542'
+            ),
+            pointBorderColor: '#14171C',
+            pointBorderWidth: 1.5,
+            pointHoverRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { intersect: false, mode: 'index' },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#20242C',
+              borderColor: '#262B34',
+              borderWidth: 1,
+              titleColor: '#8B92A0',
+              bodyColor: '#E8EAED',
+              bodyFont: { family: "'IBM Plex Mono', monospace", size: 12 },
+              titleFont: { family: "'Inter', sans-serif", size: 11 },
+              padding: 10,
+              cornerRadius: 6,
+              displayColors: false,
+              callbacks: {
+                label: (item) => '₹' + item.parsed.y.toLocaleString('en-IN')
+              }
             }
-        });
-    </script>
+          },
+          scales: {
+            x: {
+              grid: { color: '#262B34', drawTicks: false },
+              border: { color: '#262B34' },
+              ticks: { color: '#8B92A0', font: { family: "'IBM Plex Mono', monospace", size: 10.5 }, maxTicksLimit: 8 }
+            },
+            y: {
+              grid: { color: '#262B34', drawTicks: false },
+              border: { color: '#262B34' },
+              ticks: {
+                color: '#8B92A0',
+                font: { family: "'IBM Plex Mono', monospace", size: 10.5 },
+                callback: (v) => '₹' + v.toLocaleString('en-IN')
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
 
 </body>
+
 </html>

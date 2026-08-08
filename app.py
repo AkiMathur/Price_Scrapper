@@ -33,10 +33,10 @@ def get_bookmarked_products():
     cur = con.cursor()
     bookmarked = []
 
-    cur.execute("""SELECT id,title,url FROM products""")
+    cur.execute("""SELECT id,title,url,image FROM products""")
     rows = cur.fetchall()
     for row in rows:
-        bookmarked.append({'title': row['title'], 'url': row['url'], 'id': row['id']})
+        bookmarked.append({'title': row['title'], 'url': row['url'], 'id': row['id'], 'image': row['image']})
     con.close()
     return bookmarked
 
